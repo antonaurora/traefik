@@ -1,0 +1,32 @@
+services:
+  traefik:
+    image: traefik:v2.4
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesResolvers.confresolver.acme.httpChallenge.entryPoint=web"
+      - "--certificatesResolvers.confresolver.acme.email=anton@td-aurora.ru"
+      - "--certificatesResolvers.confresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"  
+    labels:
+      - "traefik.http.routers.conf.tls=true"
+      - "traefik.http.routers.conf.tls.certresolver=confresolver"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      -  "letsencrypt:/letsencrypt"
+    networks:
+      - traefik-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+volumes: 
+  letsencrypt:
+networks:
+  traefik-net:
+    external: true
