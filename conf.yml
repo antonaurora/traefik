@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  myapp:
+    image: nginxdemos/hello
+    networks:
+      - traefik-net
+    deploy:
+      replicas: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.conf.tls=true"
+        - "traefik.http.routers.conf.tls.certresolver=confresolver"
+        - "traefik.http.routers.conf.rule=Host(`conf.td-aurora.ru`)"
+        - "traefik.http.services.conf.loadbalancer.server.port=80"
+volumes: 
+  letsencrypt:
+
+networks:
+  traefik-net:
+    external: true
