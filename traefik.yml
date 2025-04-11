@@ -7,12 +7,16 @@ services:
       - "--providers.docker.exposedByDefault=false"
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
       - "--certificatesResolvers.confresolver.acme.httpChallenge.entryPoint=web"
+      - "--entryPoints.traefik.address=:8080"
       - "--certificatesResolvers.confresolver.acme.email=anton@td-aurora.ru"
       - "--certificatesResolvers.confresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
       - "443:443"  
+      - "8080:8080"
     labels:
       - "traefik.http.routers.conf.tls=true"
       - "traefik.http.routers.conf.tls.certresolver=confresolver"
